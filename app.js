@@ -15,8 +15,10 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+const posts = [];
+
 app.get("/", function(req, res){
-  res.render("home", {home: homeStartingContent});
+  res.render("home", {home: homeStartingContent, posts: posts});
 });
 
 app.get("/contact", function(req, res){
@@ -32,13 +34,28 @@ app.get("/compose", function(req, res){
 });
 
 app.post("/compose", function(req, res){
-  let newPost = req.body.newPost;
+  const post = {
+    title: req.body.postTitle,
+    body: req.body.postBody
+  };
 
-  console.log(newPost)
+  posts.push(post);
+  res.redirect("/");
 });
 
+app.get("/posts/:postTitle", function(req, res){
+  const matchTitle = req.params.postTitle;
 
+  posts.forEach(function(post){
+    const storedTitle = post.title;
 
+    if(matchTitle === storedTitle){
+      console.log("Match Found");
+    }else{
+      console.log("Match Not Found");
+    }
+  })
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
